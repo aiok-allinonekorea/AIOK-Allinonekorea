@@ -1,0 +1,122 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AIOK - All In One Korea - 外国人支援サービス</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+  <!-- Header -->
+  <header class="bg-blue-600 text-white py-6">
+    <div class="container mx-auto px-4 text-center">
+      <div class="flex justify-end">
+        <a href="index-ko.html" class="text-white underline">한국어</a>
+        <a href="index-en.html" class="text-white underline mx-2">English</a>
+        <a href="index-zh.html" class="text-white underline">中文</a>
+      </div>
+      <h1 class="text-3xl md:text-4xl font-bold">AIOK - All In One Korea</h1>
+      <p class="mt-2 text-lg">韓国での外国人向け総合支援サービス</p>
+    </div>
+  </header>
+  <main class="container mx-auto px-4 py-8">
+    <section class="mb-12">
+      <h2 class="text-2xl font-semibold mb-4">サービス紹介</h2>
+      <p class="text-gray-700 leading-relaxed">
+        韓国へようこそ、外国人の皆様！<strong>AIOK - All In One Korea</strong>は、韓国での生活をより便利で楽しいものにする総合支援サービスです。  
+        宿泊予約からビザ申請、翻訳サポート、文化体験まで、必要なすべての支援を提供します。  
+        言語の壁が心配でもご安心ください。英語、中国語、日本語などの言語でサービスを提供します。
+      </p>
+    </section>
+    <section class="mb-12">
+      <h2 class="text-2xl font-semibold mb-4">提供サービス</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-white p-4 rounded-lg shadow-md">
+          <h3 class="text-xl font-bold mb-2">予約および注文サポート</h3>
+          <p class="text-gray-600">デリバリーフード、レストラン、宿泊施設、Spa-美容-ヘアサロン、タクシー呼び出し、観光地チケットなど</p>
+        </div>
+        <div class="bg-white p-4 rounded-lg shadow-md">
+          <h3 class="text-xl font-bold mb-2">通訳同伴サポート</h3>
+          <p class="text-gray-600">観光地、レストラン、病院、Spa-美容-ヘアサロン、タトゥーショップ、ショッピング、VIP同伴、翻訳、公証、行政機関同伴およびその他のすべてのサービス</p>
+        </div>
+        <div class="bg-white p-4 rounded-lg shadow-md">
+          <h3 class="text-xl font-bold mb-2">ビザおよび行政サポート</h3>
+          <p class="text-gray-600">すべての種類のビザ申請（学生ビザ、就労ビザ、結婚ビザなど）、銀行口座開設、外国人登録、事業者登録証発行など</p>
+        </div>
+        <div class="bg-white p-4 rounded-lg shadow-md">
+          <h3 class="text-xl font-bold mb-2">不動産</h3>
+          <p class="text-gray-600">アパート、オフィステル、ワンルームの賃貸/購入相談、契約支援、市場分析など</p>
+        </div>
+        <div class="bg-white p-1 rounded-lg w-full shadow-md h-40">
+          <h3 class="text-xl font-bold mb-1">どんなご依頼も</h3>
+          <p class="text-gray-600 leading-tight text-sm">小さな雑務からお客様が望むあらゆることをお手伝いします。<br>例：引っ越しサポート、物品配送、掃除、すべての種類のレッスン、撮影、機材レンタル、ベビー-ペットシッター、コンサルティングおよび情報調査、ツアーサービス、お客様の極めて個人的な依頼など。<br>どんな支援でも気軽にご依頼ください！</p>
+        </div>
+      </div>
+      <p class="mt-4 text-gray-700"><strong>すべてのサービスは法律の範囲内で提供され、違法な要素を含む依頼は絶対に受け付けません。</strong></p>
+    </section>
+    <section class="mb-12">
+      <h2 class="text-2xl font-semibold mb-4">お問い合わせ</h2>
+      <p class="text-gray-700 mb-4">ご質問やお手伝いが必要な場合は、いつでもご連絡ください！</p>
+      <div class="bg-white p-6 rounded-lg shadow-md">
+        <p class="text-gray-700"><strong>メール:</strong> <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="492800262267282525202726272c22263b2c28092e24282025672a2624">[email&#160;protected]</a></p>
+        <p class="text-gray-700"><strong>電話番号:</strong> +82-10-4451-2581</p>
+        <p class="text-gray-700"><strong>WhatsApp & KakaoTalk:</strong> +82-10-4451-2581</p>
+        <p class="text-gray-700"><strong>Instagram:</strong> DM @AIOK_AllInOneKorea</p>
+        <p class="text-gray-700"><strong>営業時間:</strong> 月曜日から日曜日、午前9時 - 午後10時</p>
+      </div>
+    </section>
+    <section class="text-center">
+      <h2 class="text-2xl font-semibold mb-4">今すぐお問い合わせ！</h2>
+      <p class="text-gray-700 mb-6">韓国での新しい旅を一緒に始めましょう。</p>
+      <button onclick="alert('メール、電話、WhatsApp & KakaoTalk、またはInstagramでご連絡ください！')" 
+              class="bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700">
+        今すぐ連絡
+      </button>
+    </section>
+  </main>
+  <footer class="bg-gray-800 text-white py-6">
+    <div class="container mx-auto px-4 text-center">
+      <p>&copy; 2025 AIOK - All In One Korea. すべての権利を留保します。</p>
+    </div>
+  </footer>
+</body>
+</html>
